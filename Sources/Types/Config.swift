@@ -17,7 +17,15 @@ extension RSRangedDateTimePickerView {
         
         let calendar: Calendar
         
-        static var date: Config {
+        public init(minimumDate: Date, maximumDate: Date, minutesInterval: Int, minimumMultipleOfMinutesIntervalForRangeDuration: Int, calendar: Calendar) {
+            self.minimumDate = minimumDate
+            self.maximumDate = maximumDate
+            self.minutesInterval = minutesInterval
+            self.minimumMultipleOfMinutesIntervalForRangeDuration = minimumMultipleOfMinutesIntervalForRangeDuration
+            self.calendar = calendar
+        }
+        
+        public static var date: Config {
             Config(
                 minimumDate: Calendar.current.date(byAdding: .year, value: -1, to: Date())!,
                 maximumDate: Calendar.current.date(byAdding: .year, value: 1, to: Date())!,
@@ -27,7 +35,7 @@ extension RSRangedDateTimePickerView {
             )
         }
         
-        static var time: Config {
+        public static var time: Config {
             Config(
                 minimumDate: Calendar.current.date(byAdding: .year, value: -1, to: Date())!,
                 maximumDate: Calendar.current.date(byAdding: .year, value: 1, to: Date())!,

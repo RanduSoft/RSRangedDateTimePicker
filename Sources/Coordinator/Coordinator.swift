@@ -11,10 +11,12 @@ import UIKit
 extension RSRangedDateTimePickerView {
     public class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
         var parent: RSRangedDateTimePickerView
+        var config: Config {
+            self.parent.config
+        }
         
         var minimumRangeDurationInMinutes: Int {
-            return self.parent.config.minutesInterval *
-            self.parent.config.minimumMultipleOfMinutesIntervalForRangeDuration
+            config.minutesInterval * config.minimumMultipleOfMinutesIntervalForRangeDuration
         }
         
         var startDateComponentStartDate: Date!
@@ -25,7 +27,10 @@ extension RSRangedDateTimePickerView {
         }
         
         public func numberOfComponents(in pickerView: UIPickerView) -> Int {
-            return 2
+            switch self.parent.style {
+                case .date, .time: 1
+                case .dateRange, .timeRange: 2
+            }
         }
         
         public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
@@ -34,33 +39,31 @@ extension RSRangedDateTimePickerView {
         
         public func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
             switch self.parent.style {
-                case .dateRange(let formatter):
-                    return formatter.string(from: self.date(component: component, row: row))
-                case .timeRange(let formatter):
-                    return formatter.string(from: self.date(component: component, row: row))
+                case .dateRange(let formatter), .timeRange(let formatter), .date(let formatter), .time(let formatter):
+                    return formatter.string(from: date(component: component, row: row))
             }
         }
         
         public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-            if pickerView.selectedRow(inComponent: 0) > pickerView.selectedRow(inComponent: 1) {
-                pickerView.selectRow(pickerView.selectedRow(inComponent: 0), inComponent: 1, animated: true)
+            if selectedRow(forComponent: 0, in: pickerView) > selectedRow(forComponent: 1, in: pickerView) {
+                selectRow(selectedRow(forComponent: 0, in: pickerView), inComponent: 1, in: pickerView)
             }
             
-            switch self.parent.style {
+            let startDate = date(component: 0, row: selectedRow(forComponent: 0, in: pickerView))
+            let endDate = date(component: 1, row: selectedRow(forComponent: 1, in: pickerView))
+            
+            switch parent.style {
                 case .dateRange:
-                    self.parent.selectedRange = DateRange(
-                        start: self.date(component: 0, row: pickerView.selectedRow(inComponent: 0)),
-                        end: self.date(component: 1, row: pickerView.selectedRow(inComponent: 1))
-                    )
+                    parent.selectedRange = DateRange(start: startDate, end: endDate)
                 case .timeRange:
-                    self.parent.selectedRange = DateRange(
-                        start: self.extractTimeFrom(date:
-                                                        self.date(component: 0, row: pickerView.selectedRow(inComponent: 0))
-                                                   ),
-                        end: self.extractTimeFrom(date:
-                                                    self.date(component: 1, row: pickerView.selectedRow(inComponent: 1))
-                                                 )
+                    parent.selectedRange = DateRange(
+                        start: extractTimeFrom(date: startDate),
+                        end: extractTimeFrom(date: endDate)
                     )
+                case .date :
+                    parent.selectedDate = startDate
+                case .time:
+                    parent.selectedDate = extractTimeFrom(date: startDate)
             }
         }
     }

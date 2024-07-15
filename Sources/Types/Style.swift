@@ -8,8 +8,10 @@
 import Foundation
 
 extension RSRangedDateTimePickerView {
-     public enum Style {
+    public enum Style {
+        case date(formatter: DateFormatter = RSRangedDateTimePickerView.Style.defaultDateFormatter)
         case dateRange(formatter: DateFormatter = RSRangedDateTimePickerView.Style.defaultDateFormatter)
+        case time(formatter: DateFormatter = RSRangedDateTimePickerView.Style.defaultTimeFormatter)
         case timeRange(formatter: DateFormatter = RSRangedDateTimePickerView.Style.defaultTimeFormatter)
         
         public static var defaultDateFormatter: DateFormatter {
@@ -25,3 +27,4 @@ extension RSRangedDateTimePickerView {
         }
     }
 }
+

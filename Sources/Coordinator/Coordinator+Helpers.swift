@@ -12,61 +12,61 @@ extension RSRangedDateTimePickerView.Coordinator {
     func startDate(component: Int) -> Date {
         let startDate: Date
         if component == 0 {
-            startDate = self.startDateComponentStartDate
+            startDate = startDateComponentStartDate
         } else {
-            startDate = self.endDateComponentStartDate
+            startDate = endDateComponentStartDate
         }
         
         return startDate
     }
     
     func date(component: Int, row: Int) -> Date {
-        return Date(
-            timeInterval: TimeInterval(row * self.parent.config.minutesInterval * 60),
-            since: self.startDate(component: component)
-        )
+        Date(timeInterval: TimeInterval(row * config.minutesInterval * 60), since: startDate(component: component))
     }
     
     func row(date: Date, component: Int) -> Int {
         let minutesSinceStartDate = max(date.timeIntervalSince(startDate(component: component)) / 60, 0)
-        return Int(minutesSinceStartDate) / self.parent.config.minutesInterval
+        return Int(minutesSinceStartDate) / config.minutesInterval
     }
     
     func numberOfDatesForComponent(_ component: Int) -> Int {
-        let calendar = self.parent.config.calendar
+        let calendar = config.calendar
         
-        let startOfDay = calendar.startOfDay(for: self.startDateComponentStartDate)
+        let startOfDay = calendar.startOfDay(for: startDateComponentStartDate)
         let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!.addingTimeInterval(-1)
         
         var adjustedMaximumDate: Date!
         
-        switch self.parent.style {
-            case .dateRange:
-                adjustedMaximumDate = self.parent.config.maximumDate
-            case .timeRange:
-                adjustedMaximumDate = min(self.parent.config.maximumDate, endOfDay)
+        switch parent.style {
+            case .dateRange, .date:
+                adjustedMaximumDate = config.maximumDate
+            case .timeRange, .time:
+                adjustedMaximumDate = min(config.maximumDate, endOfDay)
         }
         
         let minutesBetweenDates = ceil(
-            adjustedMaximumDate.timeIntervalSince(self.startDateComponentStartDate) / 60.0
-            - Double(self.minimumRangeDurationInMinutes)
+            adjustedMaximumDate.timeIntervalSince(startDateComponentStartDate) / 60.0
+            - 
+            Double(minimumRangeDurationInMinutes)
         )
-        return Int(minutesBetweenDates / Double(self.parent.config.minutesInterval))
+        return Int(minutesBetweenDates / Double(config.minutesInterval))
     }
     
     func refreshDates() {
         let calendar = self.parent.config.calendar
         
         switch self.parent.style {
-            case .dateRange:
-                let dateComponents = calendar.dateComponents([.year, .month, .day], from: self.parent.config.minimumDate)
+            case .dateRange, .date:
+                let dateComponents = calendar.dateComponents([
+                    .year, .month, .day
+                ], from: config.minimumDate)
                 
                 self.startDateComponentStartDate = calendar.date(from: dateComponents)!
                 self.endDateComponentStartDate = Date(
                     timeInterval: 0,
-                    since: self.startDateComponentStartDate
+                    since: startDateComponentStartDate
                 )
-            case .timeRange:
+            case .timeRange, .time:
                 var dateComponents = calendar.dateComponents([
                     .year, .month, .day,
                     .minute, .hour, .second
@@ -75,24 +75,42 @@ extension RSRangedDateTimePickerView.Coordinator {
                 dateComponents.minute = Int(
                     ceil(
                         Double(dateComponents.minute ?? 0) /
-                        Double(self.parent.config.minutesInterval)
-                    ) * Double(self.parent.config.minutesInterval)
+                        Double(config.minutesInterval)
+                    ) * Double(config.minutesInterval)
                 )
                 dateComponents.second = 0
                 
                 self.startDateComponentStartDate = calendar.date(from: dateComponents)!
                 self.endDateComponentStartDate = Date(
-                    timeInterval: TimeInterval(self.minimumRangeDurationInMinutes * 60),
-                    since: self.startDateComponentStartDate
+                    timeInterval: TimeInterval(minimumRangeDurationInMinutes * 60),
+                    since: startDateComponentStartDate
                 )
         }
     }
     
     func extractTimeFrom(date: Date) -> Date {
-        return self.parent.config.calendar.date(from:
-            self.parent.config.calendar.dateComponents(
+        return config.calendar.date(from:
+            config.calendar.dateComponents(
                 [.hour, .minute], from: date
             )
         )!
+    }
+}
+
+extension RSRangedDateTimePickerView.Coordinator {
+    func selectRow(_ row: Int, inComponent component: Int, in pickerView: UIPickerView, animated: Bool = true) {
+        guard pickerView.numberOfComponents > component else {
+            return
+        }
+        
+        pickerView.selectRow(row, inComponent: component, animated: animated)
+    }
+    
+    func selectedRow(forComponent component: Int, in pickerView: UIPickerView) -> Int {
+        guard pickerView.numberOfComponents > component else {
+            return 0
+        }
+        
+        return pickerView.selectedRow(inComponent: component)
     }
 }
