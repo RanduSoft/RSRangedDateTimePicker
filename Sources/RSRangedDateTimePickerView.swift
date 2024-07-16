@@ -8,8 +8,6 @@
 import SwiftUI
 
 public struct RSRangedDateTimePickerView: View {
-    @Environment(\.dismiss) var dismiss
-    
     @State var style: PickerView.Style
     @State var config: PickerView.Config?
     
@@ -28,32 +26,22 @@ public struct RSRangedDateTimePickerView: View {
     }
     
     public var body: some View {
-        ZStack {
-            Spacer()
-        }.sheet(isPresented: $showSheet, onDismiss: {
-            onDismiss?()
-        }, content: {
-            VStack {
-                PickerView(style: style, config: config, selectedDate: $selectedDate, selectedRange: $selectedRange)
-                
-                Button {
-                    showSheet.toggle()
-                } label: {
-                    Text("Save")
-                        .fontWeight(.medium)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 30)
-                }.buttonStyle(.borderedProminent).padding(.horizontal, 24)
-            }
-            .padding(.top, 38).padding(.bottom, 20)
-            .presentationDetents([.height(290)])
-            .presentationDragIndicator(.visible)
-            .presentationCornerRadius()
-        }).onChange(of: showSheet) { newValue in
-            if newValue == false {
-                dismiss()
-            }
+        VStack {
+            PickerView(style: style, config: config, selectedDate: $selectedDate, selectedRange: $selectedRange)
+            
+            Button {
+                showSheet.toggle()
+            } label: {
+                Text("Save")
+                    .fontWeight(.medium)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 30)
+            }.buttonStyle(.borderedProminent).padding(.horizontal, 24)
         }
+        .padding(.top, 38).padding(.bottom, 20)
+        .presentationDetents([.height(290)])
+        .presentationDragIndicator(.visible)
+        .presentationCornerRadius()
     }
 }
 
@@ -68,5 +56,5 @@ extension View {
 }
 
 #Preview {
-    RSRangedDateTimePickerView(style: .dateRange(), config: .date, selectedDate: .constant(.now))
+    RSRangedDateTimePickerView(style: .date())
 }

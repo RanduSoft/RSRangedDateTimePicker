@@ -41,14 +41,33 @@ import SwiftUI
 import RSRangedDateTimePicker
 
 struct ContentView: View {
-    @State private var dateRange = PickerView.DateRange(start: Date(), end: Date())
+    @State private var showPicker = false
+    @State private var selectedRange = PickerView.DateRange(start: Date(), end: Date())
     
     var body: some View {
         VStack {
-            PickerView(style: .dateRange(), selectedRange: $dateRange)
-                .frame(height: 200)
+            Button("Show Date Range Picker") {
+                showPicker = true
+            }
             
-            Text("Selected range: \(dateRange.start) - \(dateRange.end)")
+            List {
+                HStack {
+                    Text("Start")
+                    Spacer()
+                    Text(selectedRange.start, style: .date)
+                        .foregroundStyle(.secondary)
+                }
+                
+                HStack {
+                    Text("End")
+                    Spacer()
+                    Text(selectedRange.end, style: .date)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .sheet(isPresented: $showPicker) {
+            RSRangedDateTimePickerView(style: .dateRange(), selectedRange: $selectedRange)
         }
     }
 }

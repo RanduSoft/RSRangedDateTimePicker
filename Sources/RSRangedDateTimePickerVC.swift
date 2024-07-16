@@ -20,7 +20,7 @@ public class RSRangedDateTimePickerViewController: UIViewController {
     public var onRangeSelected: ((PickerView.DateRange) -> Void)?
     public var onDismiss: (() -> Void)?
     
-    private var hostingController: UIHostingController<RSRangedDateTimePickerView>?
+    private var hostingController: UIHostingController<RSRangedDateTimePickerSheetView>?
     
     public init(style: PickerView.Style, config: PickerView.Config? = nil, initialDate: Date = .now, initialRange: PickerView.DateRange = PickerView.DateRange(start: .now, end: .now)) {
         self.style = style
@@ -39,7 +39,7 @@ public class RSRangedDateTimePickerViewController: UIViewController {
         
         self.view.backgroundColor = .clear
         
-        let swiftUIView = RSRangedDateTimePickerView(
+        let swiftUIView = RSRangedDateTimePickerSheetView(
             style: style,
             config: config,
             selectedDate: Binding(
