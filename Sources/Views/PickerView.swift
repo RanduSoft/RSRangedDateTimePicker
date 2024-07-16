@@ -1,5 +1,5 @@
 //
-//  RSRangedDateTimePickerView
+//  PickerView
 //
 //  Created by Radu Ursache - RanduSoft
 //  Version: 1.0
@@ -8,25 +8,35 @@
 import SwiftUI
 import UIKit
 
-public struct RSRangedDateTimePickerView: UIViewRepresentable {
-    @State var style: RSRangedDateTimePickerView.Style
-    @State var config: RSRangedDateTimePickerView.Config
+public struct PickerView: UIViewRepresentable {
+    @State var style: PickerView.Style
+    @State var config: PickerView.Config
     
     @Binding var selectedDate: Date
-    @Binding var selectedRange: RSRangedDateTimePickerView.DateRange
+    @Binding var selectedRange: PickerView.DateRange
     
-    public init(style: RSRangedDateTimePickerView.Style, config: RSRangedDateTimePickerView.Config, selectedDate: Binding<Date>? = nil, selectedRange: Binding<RSRangedDateTimePickerView.DateRange>? = nil) {
+    public init(style: PickerView.Style, config: PickerView.Config? = nil, selectedDate: Binding<Date>? = nil, selectedRange: Binding<PickerView.DateRange>? = nil) {
         self.style = style
-        self.config = config
+        if let config {
+            self.config = config
+        } else {
+            switch style {
+                case .date, .dateRange:
+                    self.config = .date
+                case .time, .timeRange:
+                    self.config = .time
+            }
+        }
+        
         self._selectedDate = selectedDate ?? .constant(.now)
-        self._selectedRange = selectedRange ?? .constant(RSRangedDateTimePickerView.DateRange(start: .now, end: .now))
+        self._selectedRange = selectedRange ?? .constant(PickerView.DateRange(start: .now, end: .now))
     }
     
-    public func makeCoordinator() -> RSRangedDateTimePickerView.Coordinator {
+    public func makeCoordinator() -> PickerView.Coordinator {
         return Coordinator(self)
     }
     
-    public func makeUIView(context: UIViewRepresentableContext<RSRangedDateTimePickerView>) -> UIPickerView {
+    public func makeUIView(context: UIViewRepresentableContext<PickerView>) -> UIPickerView {
         let picker = UIPickerView(frame: .zero)
         
         picker.dataSource = context.coordinator
@@ -34,22 +44,29 @@ public struct RSRangedDateTimePickerView: UIViewRepresentable {
         
         context.coordinator.refreshDates()
         
-        context.coordinator.selectRow(
-            context.coordinator.row(date: selectedRange.start, component: 0),
-            inComponent: 0, in: picker, animated: false)
-        
-        context.coordinator.selectRow(
-            context.coordinator.row(date: selectedRange.end, component: 1),
-            inComponent: 1, in: picker, animated: false)
+        switch style {
+            case .date, .time:
+                context.coordinator.selectRow(
+                    context.coordinator.row(date: selectedDate, component: 0),
+                    inComponent: 0, in: picker, animated: false)
+            case .dateRange, .timeRange:
+                context.coordinator.selectRow(
+                    context.coordinator.row(date: selectedRange.start, component: 0),
+                    inComponent: 0, in: picker, animated: false)
+                
+                context.coordinator.selectRow(
+                    context.coordinator.row(date: selectedRange.end, component: 1),
+                    inComponent: 1, in: picker, animated: false)
+        }
         
         return picker
     }
     
-    public func updateUIView(_ view: UIPickerView, context: UIViewRepresentableContext<RSRangedDateTimePickerView>) {
+    public func updateUIView(_ view: UIPickerView, context: UIViewRepresentableContext<PickerView>) {
         // not needed
     }
 }
 
 #Preview {
-    RSRangedPickerDemoView()
+    DemoView()
 }

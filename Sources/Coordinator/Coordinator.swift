@@ -8,9 +8,9 @@
 import Foundation
 import UIKit
 
-extension RSRangedDateTimePickerView {
+extension PickerView {
     public class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
-        var parent: RSRangedDateTimePickerView
+        var parent: PickerView
         var config: Config {
             self.parent.config
         }
@@ -22,7 +22,7 @@ extension RSRangedDateTimePickerView {
         var startDateComponentStartDate: Date!
         var endDateComponentStartDate: Date!
         
-        init(_ pickerView: RSRangedDateTimePickerView) {
+        init(_ pickerView: PickerView) {
             self.parent = pickerView
         }
         

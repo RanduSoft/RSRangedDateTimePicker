@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension RSRangedDateTimePickerView {
+extension PickerView {
     public struct Config {
         let minimumDate: Date
         let maximumDate: Date

@@ -1,5 +1,5 @@
 //
-//  RSRangedDateTimePickerView - Demo View
+//  DemoView
 //
 //  Created by Radu Ursache - RanduSoft
 //  Version: 1.0
@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct RSRangedPickerDemoView: View {
-    @State private var dateRange = RSRangedDateTimePickerView.DateRange(
+struct DemoView: View {
+    @State private var dateRange = PickerView.DateRange(
         start: Date(),
         end: Date()
     )
     
-    @State private var timeRange = RSRangedDateTimePickerView.DateRange(
+    @State private var timeRange = PickerView.DateRange(
         start: Date(),
         end: Date()
     )
@@ -22,7 +22,7 @@ struct RSRangedPickerDemoView: View {
         VStack(spacing: 20) {
             VStack(spacing: 12) {
                 Text("Time").bold()
-                RSRangedDateTimePickerView(style: .timeRange(), config: .time, selectedRange: self.$timeRange)
+                PickerView(style: .timeRange(), config: .time, selectedRange: self.$timeRange)
                     .frame(height: 200)
                 
                 Text("Selection").italic()
@@ -36,7 +36,7 @@ struct RSRangedPickerDemoView: View {
             
             VStack(spacing: 12) {
                 Text("Date").bold()
-                RSRangedDateTimePickerView(style: .dateRange(), config: .date, selectedRange: self.$dateRange)
+                PickerView(style: .dateRange(), config: .date, selectedRange: self.$dateRange)
                     .frame(height: 200)
                 
                 Text("Selection").italic()
@@ -56,5 +56,5 @@ struct RSRangedPickerDemoView: View {
 }
 
 #Preview {
-    RSRangedPickerDemoView()
+    DemoView()
 }

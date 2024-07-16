@@ -7,10 +7,10 @@
 
 import Foundation
 
-extension RSRangedDateTimePickerView {
+extension PickerView {
     public struct DateRange: Equatable {
-        let start: Date
-        let end: Date
+        public let start: Date
+        public let end: Date
         
         public init(start: Date, end: Date) {
             self.start = start

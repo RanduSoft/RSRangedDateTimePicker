@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-extension RSRangedDateTimePickerView.Coordinator {
+extension PickerView.Coordinator {
     func startDate(component: Int) -> Date {
         let startDate: Date
         if component == 0 {
@@ -97,7 +97,7 @@ extension RSRangedDateTimePickerView.Coordinator {
     }
 }
 
-extension RSRangedDateTimePickerView.Coordinator {
+extension PickerView.Coordinator {
     func selectRow(_ row: Int, inComponent component: Int, in pickerView: UIPickerView, animated: Bool = true) {
         guard pickerView.numberOfComponents > component else {
             return

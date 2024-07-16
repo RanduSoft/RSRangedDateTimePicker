@@ -7,12 +7,12 @@
 
 import Foundation
 
-extension RSRangedDateTimePickerView {
+extension PickerView {
     public enum Style {
-        case date(formatter: DateFormatter = RSRangedDateTimePickerView.Style.defaultDateFormatter)
-        case dateRange(formatter: DateFormatter = RSRangedDateTimePickerView.Style.defaultDateFormatter)
-        case time(formatter: DateFormatter = RSRangedDateTimePickerView.Style.defaultTimeFormatter)
-        case timeRange(formatter: DateFormatter = RSRangedDateTimePickerView.Style.defaultTimeFormatter)
+        case date(formatter: DateFormatter = PickerView.Style.defaultDateFormatter)
+        case dateRange(formatter: DateFormatter = PickerView.Style.defaultDateFormatter)
+        case time(formatter: DateFormatter = PickerView.Style.defaultTimeFormatter)
+        case timeRange(formatter: DateFormatter = PickerView.Style.defaultTimeFormatter)
         
         public static var defaultDateFormatter: DateFormatter {
             let formatter = DateFormatter()
