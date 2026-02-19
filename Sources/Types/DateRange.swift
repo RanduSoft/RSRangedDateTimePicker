@@ -13,8 +13,13 @@ extension PickerView {
         public let end: Date
         
         public init(start: Date, end: Date) {
-            self.start = start
-            self.end = end
+            if start <= end {
+                self.start = start
+                self.end = end
+            } else {
+                self.start = end
+                self.end = start
+            }
         }
     }
 }

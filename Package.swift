@@ -9,6 +9,7 @@ let package = Package(
         .library(name: "RSRangedDateTimePicker", targets: ["RSRangedDateTimePicker"]),
     ],
     targets: [
-        .target(name: "RSRangedDateTimePicker")
+        .target(name: "RSRangedDateTimePicker"),
+        .testTarget(name: "RSRangedDateTimePickerTests", dependencies: ["RSRangedDateTimePicker"])
     ]
 )

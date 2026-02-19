@@ -8,31 +8,35 @@
 import SwiftUI
 
 public struct RSRangedDateTimePickerView: View {
+    @Environment(\.dismiss) private var dismiss
+
     @State var style: PickerView.Style
     @State var config: PickerView.Config?
-    
+
     @Binding var selectedDate: Date
     @Binding var selectedRange: PickerView.DateRange
-    
-    @State private var showSheet: Bool = true
+
+    private let saveButtonTitle: String
     private let onDismiss: (() -> Void)?
-    
-    public init(style: PickerView.Style, config: PickerView.Config? = nil, selectedDate: Binding<Date>? = nil, selectedRange: Binding<PickerView.DateRange>? = nil, onDismiss: (() -> Void)? = nil) {
+
+    public init(style: PickerView.Style, config: PickerView.Config? = nil, selectedDate: Binding<Date>? = nil, selectedRange: Binding<PickerView.DateRange>? = nil, saveButtonTitle: String = "Save", onDismiss: (() -> Void)? = nil) {
         self.style = style
         self.config = config
         self._selectedDate = selectedDate ?? .constant(.now)
         self._selectedRange = selectedRange ?? .constant(PickerView.DateRange(start: .now, end: .now))
+        self.saveButtonTitle = saveButtonTitle
         self.onDismiss = onDismiss
     }
-    
+
     public var body: some View {
         VStack {
             PickerView(style: style, config: config, selectedDate: $selectedDate, selectedRange: $selectedRange)
-            
+
             Button {
-                showSheet.toggle()
+                onDismiss?()
+                dismiss()
             } label: {
-                Text("Save")
+                Text(saveButtonTitle)
                     .fontWeight(.medium)
                     .frame(maxWidth: .infinity)
                     .frame(height: 30)

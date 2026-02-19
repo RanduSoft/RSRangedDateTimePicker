@@ -111,7 +111,7 @@ class ViewController: UIViewController {
             print("onDismiss")
         }
         datePickerVC.modalPresentationStyle = .overCurrentContext
-        self.presentController(datePickerVC, animated: false)
+        self.present(datePickerVC, animated: false)
     }
 }
 ```

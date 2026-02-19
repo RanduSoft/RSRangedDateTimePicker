@@ -14,16 +14,30 @@ extension PickerView {
         case time(formatter: DateFormatter = PickerView.Style.defaultTimeFormatter)
         case timeRange(formatter: DateFormatter = PickerView.Style.defaultTimeFormatter)
         
-        public static var defaultDateFormatter: DateFormatter {
+        public static let defaultDateFormatter: DateFormatter = {
             let formatter = DateFormatter()
             formatter.dateStyle = .medium
             return formatter
-        }
-        
-        public static var defaultTimeFormatter: DateFormatter {
+        }()
+
+        public static let defaultTimeFormatter: DateFormatter = {
             let formatter = DateFormatter()
             formatter.timeStyle = .short
             return formatter
+        }()
+
+        public var isRange: Bool {
+            switch self {
+            case .dateRange, .timeRange: return true
+            case .date, .time: return false
+            }
+        }
+
+        public var isTime: Bool {
+            switch self {
+            case .time, .timeRange: return true
+            case .date, .dateRange: return false
+            }
         }
     }
 }

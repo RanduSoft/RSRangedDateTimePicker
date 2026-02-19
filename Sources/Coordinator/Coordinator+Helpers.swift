@@ -10,68 +10,66 @@ import UIKit
 
 extension PickerView.Coordinator {
     func startDate(component: Int) -> Date {
-        let startDate: Date
-        if component == 0 {
-            startDate = startDateComponentStartDate
-        } else {
-            startDate = endDateComponentStartDate
-        }
-        
-        return startDate
+        component == 0 ? startDateComponentStartDate : endDateComponentStartDate
     }
-    
+
     func date(component: Int, row: Int) -> Date {
         Date(timeInterval: TimeInterval(row * config.minutesInterval * 60), since: startDate(component: component))
     }
-    
+
     func row(date: Date, component: Int) -> Int {
         let minutesSinceStartDate = max(date.timeIntervalSince(startDate(component: component)) / 60, 0)
         return Int(minutesSinceStartDate) / config.minutesInterval
     }
-    
+
     func numberOfDatesForComponent(_ component: Int) -> Int {
         let calendar = config.calendar
-        
-        let startOfDay = calendar.startOfDay(for: startDateComponentStartDate)
-        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!.addingTimeInterval(-1)
-        
-        var adjustedMaximumDate: Date!
-        
-        switch parent.style {
-            case .dateRange, .date:
-                adjustedMaximumDate = config.maximumDate
-            case .timeRange, .time:
-                adjustedMaximumDate = min(config.maximumDate, endOfDay)
+        let componentStartDate = startDate(component: component)
+
+        let startOfDay = calendar.startOfDay(for: componentStartDate)
+        guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)?.addingTimeInterval(-1) else {
+            return 0
         }
-        
+
+        let adjustedMaximumDate: Date
+        if parent.style.isTime {
+            adjustedMaximumDate = min(config.maximumDate, endOfDay)
+        } else {
+            adjustedMaximumDate = config.maximumDate
+        }
+
+        let rangeDurationToSubtract: Double
+        if parent.style.isRange && component == 0 {
+            rangeDurationToSubtract = Double(minimumRangeDurationInMinutes)
+        } else {
+            rangeDurationToSubtract = 0
+        }
+
         let minutesBetweenDates = ceil(
-            adjustedMaximumDate.timeIntervalSince(startDateComponentStartDate) / 60.0
-            - 
-            Double(minimumRangeDurationInMinutes)
+            adjustedMaximumDate.timeIntervalSince(componentStartDate) / 60.0 - rangeDurationToSubtract
         )
-        return Int(minutesBetweenDates / Double(config.minutesInterval))
+        return max(Int(minutesBetweenDates / Double(config.minutesInterval)), 0)
     }
-    
+
     func refreshDates() {
         let calendar = self.parent.config.calendar
-        
+
         switch self.parent.style {
             case .dateRange, .date:
                 let dateComponents = calendar.dateComponents([
                     .year, .month, .day
                 ], from: config.minimumDate)
-                
-                self.startDateComponentStartDate = calendar.date(from: dateComponents)!
-                self.endDateComponentStartDate = Date(
-                    timeInterval: 0,
-                    since: startDateComponentStartDate
-                )
+
+                guard let startDate = calendar.date(from: dateComponents) else { return }
+                self.startDateComponentStartDate = startDate
+                self.endDateComponentStartDate = startDate
+
             case .timeRange, .time:
                 var dateComponents = calendar.dateComponents([
                     .year, .month, .day,
                     .minute, .hour, .second
                 ], from: calendar.startOfDay(for: Date()))
-                
+
                 dateComponents.minute = Int(
                     ceil(
                         Double(dateComponents.minute ?? 0) /
@@ -79,38 +77,33 @@ extension PickerView.Coordinator {
                     ) * Double(config.minutesInterval)
                 )
                 dateComponents.second = 0
-                
-                self.startDateComponentStartDate = calendar.date(from: dateComponents)!
+
+                guard let startDate = calendar.date(from: dateComponents) else { return }
+                self.startDateComponentStartDate = startDate
                 self.endDateComponentStartDate = Date(
                     timeInterval: TimeInterval(minimumRangeDurationInMinutes * 60),
-                    since: startDateComponentStartDate
+                    since: startDate
                 )
         }
     }
-    
+
     func extractTimeFrom(date: Date) -> Date {
-        return config.calendar.date(from:
-            config.calendar.dateComponents(
-                [.hour, .minute], from: date
-            )
-        )!
+        config.calendar.date(from:
+            config.calendar.dateComponents([.hour, .minute], from: date)
+        ) ?? date
     }
 }
 
 extension PickerView.Coordinator {
     func selectRow(_ row: Int, inComponent component: Int, in pickerView: UIPickerView, animated: Bool = true) {
-        guard pickerView.numberOfComponents > component else {
-            return
-        }
-        
+        guard pickerView.numberOfComponents > component else { return }
+        let maxRow = pickerView.numberOfRows(inComponent: component)
+        guard row >= 0, row < maxRow else { return }
         pickerView.selectRow(row, inComponent: component, animated: animated)
     }
-    
+
     func selectedRow(forComponent component: Int, in pickerView: UIPickerView) -> Int {
-        guard pickerView.numberOfComponents > component else {
-            return 0
-        }
-        
+        guard pickerView.numberOfComponents > component else { return 0 }
         return pickerView.selectedRow(inComponent: component)
     }
 }

@@ -18,6 +18,10 @@ extension PickerView {
         let calendar: Calendar
         
         public init(minimumDate: Date, maximumDate: Date, minutesInterval: Int, minimumMultipleOfMinutesIntervalForRangeDuration: Int, calendar: Calendar) {
+            precondition(minutesInterval > 0, "minutesInterval must be greater than 0")
+            precondition(minimumDate < maximumDate, "minimumDate must be before maximumDate")
+            precondition(minimumMultipleOfMinutesIntervalForRangeDuration >= 0, "minimumMultipleOfMinutesIntervalForRangeDuration must be non-negative")
+
             self.minimumDate = minimumDate
             self.maximumDate = maximumDate
             self.minutesInterval = minutesInterval
