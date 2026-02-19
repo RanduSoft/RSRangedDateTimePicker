@@ -28,7 +28,7 @@ RSRangedDateTimePicker is a versatile SwiftUI and UIKit compatible library for d
 Add the following line to your `Package.swift` file:
 
 ```swift
-.package(url: "https://github.com/RanduSoft/RSRangedDateTimePicker.git", from: "1.0.0")
+.package(url: "https://github.com/RanduSoft/RSRangedDateTimePicker.git", from: "2.0.0")
 ```
 
 ## Usage
@@ -147,7 +147,11 @@ let customStyle = PickerView.Style.dateRange(formatter: {
 
 Use these `customStyle` and `customConfig` in both `SwiftUI` and `UIKit`.
 
-The "Save" button foreground color is the app tint color and cannot be changed at this time.
+The "Save" button foreground color is the app tint color. The button title can be customized via the `saveButtonTitle` parameter:
+
+```swift
+RSRangedDateTimePickerView(style: .dateRange(), selectedRange: $selectedRange, saveButtonTitle: "Done")
+```
 
 ## License
 RSRangedDateTimePicker is available under the **MPL-2.0 license**. See the [LICENSE](https://github.com/RanduSoft/RSRangedDateTimePicker/blob/master/LICENSE) file for more info.
